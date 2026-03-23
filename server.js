@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 
@@ -65,7 +65,51 @@ app.post('/api/login', async(req, res) => {
     res.json({token, user: {username: user.username, role: user.role}});
 });
 
+//Protected route: Get user profile
+app.get('/api/profile', authenticateToken, (req, res) => {
+    res.json({user: req.user});
+});
+
 //Role-based protected route: Admin-only
 app.get('api/admin/dashboard', authenticateToken, authorizeRole('admin'), (req, res) => {
     res.json({message: 'Welcome to admin dashboard!', data: 'Secret admin info'})
+});
+
+//Public route: Guest content
+app.get('/api/content/guest', (req, res) => {
+    res.json({message: 'Public content for guests!'});
+});
+
+//Middleware portion
+
+//token authentication
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+    if (!token) {
+        return res.status(401).json({error: 'Access Token required'});
+    }
+
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+        if (err)  return res.status(403).json({error: 'Invalid or expired token'});
+        req.user = user;
+        next();
+    });
+}
+
+function authorizeRole(role) {
+    return (req, res, next) => {
+        if (req.user.role !== role) {
+            return res.status(403).json({error: 'Access denied: Insufficient permissions'});
+        }
+        next();
+    }
+};
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log('Try logging in with:');
+    console.log(' - Username: admin, Password: admin123');
+    console.log(' - Username: alice, Password: user123');
 });
