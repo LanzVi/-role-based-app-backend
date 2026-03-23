@@ -41,4 +41,31 @@ app.post('/api/register', async (req, res) => {
         username, 
         password: hashedPassword,
         role};
+
+    users.push(newUser);
+    res.status(201).json({message: 'User Registered', username, role});    
+});
+
+//POST /api/login
+app.post('/api/login', async(req, res) => {
+    const { username, password } = req.body;
+
+    const user = users.find (u => u.username === username);
+    if (!user || !await bcrypt.compare(password, user.password)){
+        return res.status(401).json({error: 'Invalid credentials'})
+    }
+
+    //generate JWWT token
+    const token = jwt.sign(
+        {id: user.id, username: user.username, role: user.role},
+        SECRET_KEY,
+        {expiresIn: '1h'}
+    );
+
+    res.json({token, user: {username: user.username, role: user.role}});
+});
+
+//Role-based protected route: Admin-only
+app.get('api/admin/dashboard', authenticateToken, authorizeRole('admin'), (req, res) => {
+    res.json({message: 'Welcome to admin dashboard!', data: 'Secret admin info'})
 });
