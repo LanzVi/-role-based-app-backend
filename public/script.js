@@ -81,10 +81,6 @@ function handleRouting() {
         }
     }
 
-    else if (hash === '#/profile') {
-        renderProfile();
-        document.getElementById('profile-page').classList.add('active');
-    } 
     else if (hash === '#/employees') {
         if (currentUser && currentUser.role === 'admin') {
             renderEmployees();
@@ -119,8 +115,6 @@ window.addEventListener('hashchange', handleRouting);
 
 // Run once when the page first loads 
 window.addEventListener('load', handleRouting);
-
-let currentUser = null; // This holds the "Member" currently in the club 
 
 // --- 5. UPDATED UI STATE MANAGEMENT ---
 // Instruction Step 3: Update UI based on user role and auth status

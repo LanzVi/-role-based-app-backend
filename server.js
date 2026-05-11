@@ -32,6 +32,12 @@ let users = [
     }
 ];
 
+const initializePasswords = async () => {
+    users[0].password = await bcrypt.hash('admin123', 10);
+    users[1].password = await bcrypt.hash('user123', 10);
+};
+initializePasswords();
+
 //post /api/register
 app.post('/api/register', async (req, res) => {
     const { username, password, firstName, lastName, role = 'user' } = req.body;
@@ -67,17 +73,17 @@ app.post('/api/login', async(req, res) => {
         SECRET_KEY,
         {expiresIn: '1h'}
     );
-});
- 
-// Send back the full user object the frontend needs
-res.json({
-    token,
-    user: {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.username, // Map username to email for the UI
-        role: user.role
-    }
+
+    // Send back the full user object the frontend needs
+    res.json({
+        token,
+        user: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.username, // Map username to email for the UI
+            role: user.role
+        }
+    });
 });
 
 //Protected route: Get user profile
