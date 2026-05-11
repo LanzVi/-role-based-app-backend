@@ -7,9 +7,10 @@ const app = express();
 const PORT = 3000;
 const SECRET_KEY = 'your-very-secure-secret';
 
-app.use(cors({origin: ['http://127.0.0.1:5500', 'http://localhost:5500']})); //frontend url
-
 app.use(express.json());//middleware to parse JSON bodies
+
+//tells Express to serve everything in the 'public' folder as static content
+app.use(express.static('public'));
 
 // server.js - Update your mock database
 let users = [

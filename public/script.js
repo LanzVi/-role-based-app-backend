@@ -147,7 +147,7 @@ function setAuthState(isAuth, user = null) {
 //Registration
 async function handleRegistration(userData) {
     try {
-        const response = await fetch('http://localhost:3000/api/register', {
+        const response = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -205,7 +205,7 @@ function simulateVerification() {
 // Instruction Step 1: Replace the old localStorage login logic with a fetch call
 async function handleLogin(email, password) {
     try {
-        const response = await fetch('http://localhost:3000/api/login', {
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: email, password })
@@ -254,7 +254,7 @@ async function renderAccounts() {
     const userCount = document.getElementById('userCount');
     
     try {
-        const res = await fetch('http://localhost:3000/api/admin/accounts', {
+        const res = await fetch('/api/admin/accounts', {
             headers: getAuthHeader() 
         });
 
